@@ -1,0 +1,15 @@
+2024-04-21 12:47:05 INFO  ScheduleGA:39 - G1 Best fitness: 0.25
+2024-04-21 12:47:05 INFO  ScheduleGA:39 - G2 Best fitness: 0.25
+2024-04-21 12:47:05 INFO  ScheduleGA:39 - G3 Best fitness: 0.25
+2024-04-21 12:47:05 INFO  ScheduleGA:60 - 
+2024-04-21 12:47:05 INFO  ScheduleGA:61 - Schedule found after 4 generations
+2024-04-21 12:47:05 INFO  ScheduleGA:62 - Fitness of final Schedule: 1.0
+2024-04-21 12:47:05 INFO  ScheduleGA:63 - Conflict: 0
+2024-04-21 12:48:04 INFO  ScheduleGA:39 - G1 Best fitness: 0.16666666666666666
+2024-04-21 12:48:04 INFO  ScheduleGA:39 - G2 Best fitness: 0.25
+2024-04-21 12:48:04 INFO  ScheduleGA:39 - G3 Best fitness: 0.25
+2024-04-21 12:48:04 INFO  ScheduleGA:39 - G4 Best fitness: 0.3333333333333333
+2024-04-21 12:48:04 INFO  ScheduleGA:60 - 
+2024-04-21 12:48:04 INFO  ScheduleGA:61 - Schedule found after 5 generations
+2024-04-21 12:48:04 INFO  ScheduleGA:62 - Fitness of final Schedule: 1.0
+2024-04-21 12:48:04 INFO  ScheduleGA:63 - Conflict: 0
