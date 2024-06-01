@@ -64,6 +64,7 @@ public class Population {
         return this.population;
     }
 
+    // Lay ca the co do fitness cao thu "offset"
     public Individual getFittest(int offset) {
         // Order population by fitness
         Arrays.sort(this.population, (Individual o1, Individual o2) -> {  // SAP XEP QUAN THE THEO THU TU FITNESS GIAM DAN

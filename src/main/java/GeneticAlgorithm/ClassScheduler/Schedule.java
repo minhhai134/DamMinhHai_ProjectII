@@ -104,16 +104,18 @@ public class Schedule {
             }
 
 
-
             // Check resource available
+            for (Integer taskListID2 : this.tasksList.keySet()) {
+                if(tasksList.get(taskListID).getResourceID()==tasksList.get(taskListID2).getResourceID()){
+                    if(tasksList.get(taskListID).getStartTime()>=tasksList.get(taskListID2).getStartTime()
+                            &&  tasksList.get(taskListID).getStartTime()<=tasksList.get(taskListID2).getEndTime()
+                            &&  taskListID != taskListID2)
+                        clashes++;
+                }
 
-//            for (TaskList taskListB : this.tasksList) {
-////                if (classA.getClassRoomId() == classB.getClassRoomId() && classA.getTimeslotId() == classB.getTimeslotId()
-////                        && classA.getClassId() != classB.getClassId()) {
-////                    clashes++;
-////                    break;
-////                }
-//            }
+            }
+
+
         }
 //        if(cnt<10){ JOptionPane.showMessageDialog(null,clashes);} cnt++;
         return clashes;
@@ -121,12 +123,102 @@ public class Schedule {
     }
 
 
+    public int calc1() {
+        int clashes = 0;
+
+        for (Integer taskListID : this.tasksList.keySet()) {
+
+            // Check predecessors
+            ArrayList<Integer> predecessors = tasks.get(taskListID).getPredecessors(); // Lay ra cac task tien nhiem
+            for(int i = 0; i < predecessors.size(); i++) {  // duyet tung task tien nhiem
+                if(tasksList.get(predecessors.get(i)).getEndTime()>= tasksList.get(taskListID).getStartTime()) clashes++;
+            }
+
+
+        }
+//        if(cnt<10){ JOptionPane.showMessageDialog(null,clashes);} cnt++;
+        return clashes;
+
+    }
+
+
+    public int calc2() {
+        int clashes = 0;
+
+        for (Integer taskListID : this.tasksList.keySet()) {
+
+            // Check resource available
+            for (Integer taskListID2 : this.tasksList.keySet()) {
+                if(tasksList.get(taskListID).getResourceID()==tasksList.get(taskListID2).getResourceID()){
+                    if(tasksList.get(taskListID).getStartTime()>=tasksList.get(taskListID2).getStartTime()
+                            &&  tasksList.get(taskListID).getStartTime()<=tasksList.get(taskListID2).getEndTime()
+                            &&  taskListID != taskListID2   ){
+                        clashes++;
+                        System.out.println("************************");
+                        System.out.println(tasksList.get(taskListID).getResourceID()+ "-"+tasksList.get(taskListID2).getResourceID() );
+                        System.out.println("T1: "+taskListID+" "+tasksList.get(taskListID).getStartTime() + "-" + tasksList.get(taskListID).getEndTime()  );
+                        System.out.println("T2: "+taskListID2+" "+tasksList.get(taskListID2).getStartTime() + "-" + tasksList.get(taskListID2).getEndTime()  );
+                        System.out.println("************************");
+                        System.out.println();
+                    }
+
+                }
+
+            }
+
+
+        }
+//        if(cnt<10){ JOptionPane.showMessageDialog(null,clashes);} cnt++;
+        return clashes;
+
+    }
+
+
+
+
+
+    // TINH CHI SO TOI UU
+
+    // 1. Tinh time
+    public int calcDurationTime () {
+        int totalTime = 0;
+
+        for (Integer taskListID : this.tasksList.keySet()) {
+
+                if(tasksList.get(taskListID).getEndTime()>= totalTime)
+                    totalTime = tasksList.get(taskListID).getEndTime() ;
+        }
+
+        return totalTime;
+    }
+
+    // 2. Tinh cost
+
+    public double calcCost () {
+        double cost = 0;
+
+        for (Integer taskListID : this.tasksList.keySet()) {
+
+             cost += resources.get(tasksList.get(taskListID).getResourceID()).getSalary()*tasksList.get(taskListID).getDuration();
+
+        }
+
+        return cost;
+    }
+
+
     private HashMap<Integer,TaskList>  tasksList;
 
     private  int timeLimit;
 
+    public void setTimeLimit(int timeLimit) {
+        this.timeLimit = timeLimit;
+    }
+
     public int calcTimeLimit(){
+
         int T=0;
+        int maxdur =0;
         if(cnt<=0){
 
         }
@@ -134,15 +226,23 @@ public class Schedule {
         for(Integer taskID : tasks.keySet()){
 
              T+=tasks.get(taskID).getDuration();
+             if(tasks.get(taskID).getDuration()>maxdur) maxdur=tasks.get(taskID).getDuration();
 //            if(cnt<10) JOptionPane.showMessageDialog(null,taskID +" "+ tasks.get(taskID).getDuration() +" "+ T); cnt++;
         }
 //        if(cnt<10) JOptionPane.showMessageDialog(null, T); cnt++;
-        return 100;
+        return T-maxdur;
     }
 
+    public HashMap<Integer, TaskList> getTasksList() {
+        return tasksList;
+    }
+
+    public TaskList[] getTasksListAsArray() {
+        return (TaskList[])  this.tasksList.values().toArray(new TaskList[this.tasksList.size()]);
+    }
 
     public int getRandomStartTime() {
-
+//        if(cnt<10) JOptionPane.showMessageDialog(null, timeLimit * Math.random()); cnt++;
         return (int) (timeLimit * Math.random());
 
     }

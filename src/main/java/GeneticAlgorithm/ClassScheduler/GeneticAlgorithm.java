@@ -40,7 +40,7 @@ public class GeneticAlgorithm {
     }
 
     public boolean isTerminationConditionMet(Population population) {
-        return population.getFittest(0).getFitness() == 1.0;
+        return population.getFittest(0).getClashes() == 0;
     }
 
     // Create fitness hashtable
@@ -109,9 +109,11 @@ public class GeneticAlgorithm {
 
 
     //************************************************************************************
-    // Hash table was used to store the values of fitness calculated
-    // so it helped in saving extra calculations fitness of same individual can be taken from hash table
+    // Hash table dung de luu gia tri fitness cua mot ma ca the
+    // dieu nay giup khong phai tinh lai fitness cua mot ca the neu no da duoc tinh truoc do
     //************************************************************************************
+
+    // TINH FITNESS CUA MOT CA THE
     public double calcFitness(Individual individual, Schedule schedule) {
         Double storedFitness = this.fitnessHash.get(individual);  // Kiem tra xem individual da ton tai trong hashtable chua
         if (storedFitness != null) {
@@ -125,11 +127,33 @@ public class GeneticAlgorithm {
         threadSchedule.createTaskList(individual);    // Neu individual chua ton tai trong hashtable thi can tinh fitness cho no
                                                          // bang cach giai ma no su dung createUnivClasses()
                                        // ???(Ly do phai tao clone cho schedule la vi schedule chua thong tin dung cho ca chuong trinh)
-        // Calculate fitness
+
+//**************************************************************************
+        // Tinh clashes
         int clashes = threadSchedule.calcClashes();
-        double fitness = 1 / (double) (clashes + 1);
+
+        // Tinh totalTime
+        int totalTime = threadSchedule.calcDurationTime();
+
+        // Tinh cost
+        double cost = threadSchedule.calcCost();
+
+        individual.setClashes(clashes);
+
+        individual.setTotalTime(totalTime);
+
+        individual.setCost(cost);
+
+//**************************************************************************
+
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        // TINH FITNESS
+        double fitness = 1 /( (double) (clashes + 1)*totalTime);
 
         individual.setFitness(fitness);
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
         // Store fitness in hashtable
         this.fitnessHash.put(individual, fitness);
@@ -157,6 +181,8 @@ public class GeneticAlgorithm {
         population.setPopulationFitness(populationFitness);
     }
 
+
+    // Chon ngau nhien k ca the, lay ca the tot nhat, (fitness cao nhat)
     public Individual selectParent(Population population) {
         // Create tournament
         Population tournament = new Population(this.tournamentSize);
@@ -172,24 +198,29 @@ public class GeneticAlgorithm {
         return tournament.getFittest(0);
     }
 
-
+    // LAI GHEP
     public Population crossoverPopulation(Population population) {
         // Create new population
         Population newPopulation = new Population(population.size());
 
         // Loop over current population by fitness
+        // Duyet cac ca the cua quan the theo thu tu fitness tu cao den thap
         for (int populationIndex = 0; populationIndex < population.size(); populationIndex++) {
+            // getFittest lay ca the co do fitness cao thu populationIndex
             Individual parent1 = population.getFittest(populationIndex);
 
             // Apply crossover to this individual?
+            // Xet xem co thuc hien lai ghep voi ca the nay khong
+            // dua vao ngau nhien
+            // CONG THEM VIEC GIU LAI a ca the tot nhat de truyen tiep sang the he sau ma khong thay doi, voi a= elitismCount
             if (this.crossoverRate > Math.random() && populationIndex >= this.elitismCount) {
-                // Initialize offspring
+                // Khoi tao offspring
                 Individual offspring = new Individual(parent1.getChromosomeLength());
 
-                // Find second parent
+                // Chon parent thu 2
                 Individual parent2 = selectParent(population);
 
-                // Loop over genome
+                // Lai ghep ngau nhien de tao nhiem sac the cho offspring
                 for (int geneIndex = 0; geneIndex < parent1.getChromosomeLength(); geneIndex++) {
                     // Use half of parent1's genes and half of parent2's genes
                     if (0.5 > Math.random()) {
@@ -199,10 +230,10 @@ public class GeneticAlgorithm {
                     }
                 }
 
-                // Add offspring to new population
+                // Them offspring vao quan the moi
                 newPopulation.setIndividual(populationIndex, offspring);
             } else {
-                // Add individual to new population without applying crossover
+                // Them ca the vao, khong thuc hien lai ghep
                 newPopulation.setIndividual(populationIndex, parent1);
             }
         }
@@ -211,21 +242,21 @@ public class GeneticAlgorithm {
     }
 
 
-
+    // DOT BIEN
     public Population mutatePopulation(Population population, Schedule schedule) {   // Dung schedule nay de lam gi?
         // Initialize new population                                                 // -> de tao ngau nhien mot ca the
         Population newPopulation = new Population(this.populationSize);
 
-        // Get best fitness
+        // LAY CHI SO fitness cua ca the tot nhat trong quan the
         double bestFitness = population.getFittest(0).getFitness();
 
         for (int populationIndex = 0; populationIndex < population.size(); populationIndex++) {
             Individual individual = population.getFittest(populationIndex);  // DAI KHAI LA DUYET TUNG CA THE
 
-            // Create random individual to swap genes with
+            // Tao ngau nhien mot ca the de thuc hien swap gene
             Individual randomIndividual = new Individual(schedule);
 
-            // Calculate adaptive mutation rate
+            // Tinh chi so adaptive mutation rate
             double adaptiveMutationRate = this.mutationRate;
             if (individual.getFitness() > population.getAvgFitness()) {
                 double fitnessDelta1 = bestFitness - individual.getFitness();
@@ -233,10 +264,11 @@ public class GeneticAlgorithm {
                 adaptiveMutationRate = (fitnessDelta1 / fitnessDelta2) * this.mutationRate;
             }
 
+            if (populationIndex > this.elitismCount) { // Khong dot bien cac the elite
             for (int geneIndex = 0; geneIndex < individual.getChromosomeLength(); geneIndex++) {
-                // Skip mutation if this is an elite individual
-                if (populationIndex > this.elitismCount) {
-                    // Does this gene need mutating?
+
+
+                    // Gene nay co can dot bien hay khong?
                     //  if (adaptiveMutationRate > Math.random()) {
                     if ((adaptiveMutationRate * this.getTemperature()) > Math.random()) {
 

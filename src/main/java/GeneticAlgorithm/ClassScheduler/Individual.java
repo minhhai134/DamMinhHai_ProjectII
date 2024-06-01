@@ -1,6 +1,4 @@
 package GeneticAlgorithm.ClassScheduler;
-import GeneticAlgorithm.ClassScheduler.helper.Course;
-import GeneticAlgorithm.ClassScheduler.helper.StudentGroup;
 import GeneticAlgorithm.ClassScheduler.helper.Task;
 
 import javax.swing.*;
@@ -9,19 +7,44 @@ public class Individual {
     private static int cnt=0;
     private int[] chromosome;
     private double fitness = -1;
-    private Genotype[] genes;
+
+    private int totalTime;
+
+    public int getTotalTime() {
+        return totalTime;
+    }
+
+    public void setTotalTime(int totalTime) {
+        this.totalTime = totalTime;
+    }
+
+    public double getCost() {
+        return cost;
+    }
+
+    public int getClashes() {
+        return clashes;
+    }
+
+    public void setClashes(int clashes) {
+        this.clashes = clashes;
+    }
+
+    public void setCost(double cost) {
+        this.cost = cost;
+    }
+
+    private double cost;
+
+    private int clashes;
 
     public void setChromosome(int[] chromosome) {
         this.chromosome = chromosome;
     }
 
-    public Genotype[] getGenes() {
-        return genes;
-    }
 
-    public void setGenes(Genotype[] genes) {
-        this.genes = genes;
-    }
+
+
 
 
     // Constructors:
@@ -67,11 +90,11 @@ public class Individual {
 
         }
 
-        if(cnt<10) {
-            String str = new String();
-            for(int i=0;i<newChromosome.length;i++){str+=newChromosome[i];str+=" "; if(i%2!=0) str+="|";}
-            JOptionPane.showMessageDialog(null,str); cnt++;
-        }
+//        if(cnt<10) {
+//            String str = new String();
+//            for(int i=0;i<newChromosome.length;i++){str+=newChromosome[i];str+=" "; if(i%2!=0) str+="|";}
+//            JOptionPane.showMessageDialog(null,str); cnt++;
+//        }
 
         this.chromosome = newChromosome;
     }

@@ -1,7 +1,9 @@
 package GeneticAlgorithm.ClassScheduler.helper;
 
-public class TaskList {
+import javax.swing.*;
 
+public class TaskList {
+    private static int cnt =0;
     private int taskListID;
 
     private int taskID;
@@ -19,7 +21,7 @@ public class TaskList {
         this.taskListID = taskListID;
         this.taskID = taskID;
         this.duration = duration;
-        endTime = startTime+duration;
+//        if(cnt<10){ JOptionPane.showMessageDialog(null, startTime+ " "+endTime + "|"); cnt++;}
     }
 
     public void setResourceID(int resourceID) {
@@ -28,6 +30,8 @@ public class TaskList {
 
     public void setStartTime(int startTime) {
         this.startTime = startTime;
+        endTime = startTime+duration-1;
+//        if(cnt<10){ JOptionPane.showMessageDialog(null, startTime+ " "+endTime + "|"); cnt++;}
     }
 
     public int getTaskID() {
